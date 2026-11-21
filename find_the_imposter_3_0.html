@@ -1,0 +1,343 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Find the Imposter 3.0</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:dark}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:#11101A;color:#F5F3FA;font:16px/1.45 Inter,system-ui,"Noto Sans Malayalam",sans-serif;min-height:100%}
+#app{max-width:520px;margin:auto;padding:14px 16px 90px;min-height:100dvh}
+h1{font-size:32px;margin:6px 0}h3{margin:0 0 4px;font-size:18px}.m{color:#ADA7BC;font-size:14px;margin:4px 0}
+.c{text-align:center;padding:50px 0}.big{font-size:80px}
+.card{background:#252333;border:1px solid #39344B;border-radius:14px;padding:14px;margin:10px 0}
+.btn{display:block;width:100%;min-height:48px;margin:8px 0;border:0;border-radius:12px;background:#8655D9;color:#fff;font-weight:600;font-size:16px;font-family:inherit;cursor:pointer}
+.btn.sec{background:transparent;border:1.5px solid #8655D9}.btn.dng{background:#a32a38}.btn:disabled{background:#39344B;color:#888;cursor:not-allowed}
+.ib{min-width:44px;min-height:44px;border-radius:10px;border:1px solid #39344B;background:#252333;color:#fff;font-size:18px;cursor:pointer;font-family:inherit;padding:0 10px}
+.hd{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px;font-size:20px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 0}
+input,textarea{width:100%;padding:12px;border-radius:10px;border:1px solid #39344B;background:#1A1726;color:#fff;font:inherit}textarea{min-height:240px}
+.foot{position:sticky;bottom:0;padding:10px 0;background:linear-gradient(transparent,#11101A 35%)}
+.sel{border-color:#B99AFF;background:#33294d}.cat{cursor:pointer}
+.tag{padding:2px 10px;border-radius:99px;font-size:13px;font-weight:700;color:#fff;white-space:nowrap}
+.err{color:#EF5967}.ok{color:#32B77A}.w{color:#e8b44c}.big2{font-size:40px;font-weight:800;text-align:center;margin:18px 0;word-break:break-word}
+table{width:100%;border-collapse:collapse;font-size:14px}td,th{padding:5px;border-bottom:1px solid #39344B;text-align:left;vertical-align:top}
+@media(prefers-reduced-motion:no-preference){.card,.btn{transition:background .15s,border-color .15s}}
+.acc{background:#252333;border:1px solid #39344B;border-radius:14px;margin:10px 0;overflow:hidden}
+.acc summary{min-height:52px;padding:10px 14px;cursor:pointer;font-weight:700;font-size:16px;display:flex;align-items:center;gap:10px;list-style:none}
+.acc summary::-webkit-details-marker{display:none}
+.acc summary::after{content:'+';margin-left:auto;color:#B99AFF;font-size:24px;font-weight:400}
+.acc[open] summary::after{content:'\2212'}
+.acc[open] summary{border-bottom:1px solid #39344B}
+.acc .bd{padding:4px 14px 14px}
+.acc .bd p{margin:8px 0}.acc ul,.acc ol{margin:6px 0;padding-left:22px}.acc li{margin:4px 0}
+.num{display:inline-flex;align-items:center;justify-content:center;min-width:28px;height:28px;border-radius:50%;background:#8655D9;font-size:14px;font-weight:700}
+.rc{background:#1A1726;border-radius:10px;padding:10px 12px;margin:10px 0}.rc ul{margin:6px 0 2px}
+.ex{background:#1A1726;border-left:4px solid #B99AFF;padding:8px 12px;border-radius:8px;margin:10px 0;font-size:14px}
+.two{display:flex;gap:8px}.two .btn{margin:4px 0;min-height:44px;font-size:14px}
+.ib:disabled{opacity:.35;cursor:not-allowed}
+.pc{display:flex;justify-content:space-between;align-items:center;min-height:58px}
+.pc.pon{border-color:#4C9FF2;background:#1d2c45}.pc.dis{opacity:.45;cursor:not-allowed}
+.cnt{display:inline-block;margin:6px 0;padding:6px 18px;border-radius:99px;background:#1d2c45;border:1px solid #4C9FF2;color:#8fc4ff;font-weight:800;letter-spacing:.5px}
+.sm{font-size:13px;color:#ADA7BC;margin-top:4px}
+</style></head><body><div id="app"></div><script>
+const $=s=>document.querySelector(s),esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const rnd=n=>{try{const a=new Uint32Array(1);crypto.getRandomValues(a);return a[0]%n}catch(e){return Math.floor(Math.random()*n)}};
+const shuf=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rnd(i+1);[a[i],a[j]]=[a[j],a[i]]}return a};
+const DEF=`Food:Pizza=Round and baked, topped with melted cheese|Biryani=Layered rice dish with spices and meat|Dosa=Thin crispy fermented crepe|Burger=Patty stacked inside a round bun|Ice Cream=Cold sweet treat that melts quickly
+Animals:Elephant=Huge grey animal with a long nose|Penguin=Flightless bird that waddles on ice|Giraffe=Tallest land animal|Kangaroo=Carries its young in a pouch and hops|Owl=Night bird known for big eyes
+Home Items:Glue=Used in paper crafts and school projects|Scissors=Used for cutting different materials|Pillow=Soft and placed under your head|Umbrella=Opened when the sky gets wet|Broom=Used for sweeping floors
+Movies:Titanic=Romance aboard a famous sinking ship|Avatar=Blue beings on a distant moon|Frozen=Animated sisters and a snowy kingdom|Jaws=A shark terrorises a beach town|Baahubali=Epic Indian tale of rival princes
+Countries:Japan=Island nation of sushi and bullet trains|Brazil=Famous for carnival and football|Egypt=Home of ancient pyramids|Canada=Maple leaf and cold winters|Kenya=East African safari country
+Technology:Smartphone=Pocket device for calls and apps|Laptop=Portable computer that folds shut|Drone=Small flying machine with propellers|Headphones=Worn over the ears for private sound|Robot=Machine that can be programmed to act`;
+const BASE=[];DEF.split('\n').forEach(l=>{const k=l.indexOf(':'),c=l.slice(0,k);l.slice(k+1).split('|').forEach(x=>{const [w,p]=x.split('=');BASE.push({c,w,cc:c,p})})});
+let S={players:['Player 1','Player 2','Player 3','Player 4','Player 5'],cats:null,set:{police:1,imp:1,rounds:10,skip:1},custom:[],scores:{},hist:[],used:[]};
+try{Object.assign(S,JSON.parse(localStorage.getItem('fti1')||'{}'))}catch(e){}
+// safe migration: keep everything stored, only fill what is missing/invalid
+S.set=Object.assign({police:1,imp:1,rounds:10,skip:1},S.set&&typeof S.set=='object'?S.set:{});delete S.set.guess;
+if(!Array.isArray(S.players))S.players=['Player 1','Player 2','Player 3','Player 4','Player 5'];
+['custom','hist','used'].forEach(k=>{if(!Array.isArray(S[k]))S[k]=[]});if(!S.scores||typeof S.scores!='object')S.scores={};
+S.sv=2;
+const save=()=>{try{localStorage.setItem('fti1',JSON.stringify(S))}catch(e){}};
+const words=()=>[...BASE,...S.custom],catNames=()=>[...new Set(words().map(w=>w.c))];
+if(!S.cats)S.cats=catNames();
+let v='home',M=null,cf=null,imp='',pv=null,exp=false;
+let notice='';
+const polFor=(n,on)=>on&&n>=5?Math.floor(n/5):0,maxFor=(n,on)=>Math.max(1,Math.min(Math.floor(n/3),n-polFor(n,on)-1));
+const nP=()=>S.players.length,polN=()=>polFor(nP(),S.set.police),maxImp=()=>maxFor(nP(),S.set.police);
+const pool=()=>S.cats.filter(c=>words().some(w=>w.c==c));
+const chk=()=>{const n=nP(),pc=polN(),ic=S.set.imp;return n<3?'Add at least 3 players':!pool().length?'Select at least one category with words':!Number.isInteger(ic)||ic<1?'At least 1 imposter is required':ic>maxImp()?`Too many imposters (max ${maxImp()})`:n-pc-ic<1?'At least one ordinary innocent is needed':''};
+function fixImp(){const mx=maxImp(),o=S.set.imp;let n=parseInt(o,10);if(!(n>=1))n=1;if(n>mx)n=mx;if(n!==o){if(parseInt(o,10)>mx)notice=`Imposters adjusted from ${o} to ${n}: with ${nP()} players${polN()?` and ${polN()} police`:''} the maximum is ${mx}.`;S.set.imp=n;return true}return false}
+fixImp();
+const ROLE={innocent:['🟢 INNOCENT','#32B77A'],imposter:['🔴 IMPOSTER','#EF5967'],police:['🔵 POLICE','#4C9FF2']};
+const tag=r=>`<span class=tag style="background:${ROLE[r][1]}">${ROLE[r][0]}</span>`;
+const nm=i=>esc(S.players[i]);
+const hd=(t,b,r)=>`<div class=hd>${b?`<button class=ib aria-label=Back onclick="go('${b}')">←</button>`:'<span></span>'}<b>${t}</b>${r||'<span></span>'}</div>`;
+const cb=(k,l,cls,a,y)=>`<button class="${cls}" onclick="A('${a}',${y!==undefined?y:0},'${k}')">${cf==k?'Tap again to confirm':l}</button>`;
+const card=(t,s,g,b)=>`<div class=card><h3>${t}</h3><p class=m>${s}</p><button class="btn sec" onclick="go('${g}')">${b}</button></div>`;
+const foot=h=>`<div class=foot>${h}</div>`;
+const mh=t=>`<div class=hd><span class=m>Cycle ${M.cycle}</span><b>${t}</b><button class=ib onclick="A('quit',0,'quit')">${cf=='quit'?'Quit?':'✕'}</button></div>`;
+const act=()=>M.act,role=i=>M.roles[i];
+const NV=['home','setup','players','sets','review','cloudhome','cloudcreate','cloudjoin','cloudlobby','cloudroles','cloudplay'];
+const nb=()=>notice?`<div class=card style="border-color:#e8b44c" role=status><span class=w>⚠️ ${esc(notice)}</span><button class="btn sec" onclick="notice='';render()">OK</button></div>`:'';
+function go(p){v=p;cf=null;if(!NV.includes(p))notice='';render();scrollTo(0,0)}
+function render(){$('#app').innerHTML=V[v]();}
+function cfm(k){if(cf==k){cf=null;return true}cf=k;render();return false}
+// ---------- parser
+function parse(t){const cats={},ws={},E=[];
+t.split(/\r?\n/).forEach((ln,i)=>{ln=ln.trim();if(!ln||ln.startsWith('```'))return;const k=ln.indexOf('='),L=`Line ${i+1}`;if(k<1){E.push(`${L}: missing "=" or identifier`);return}
+const id=ln.slice(0,k).trim().toUpperCase(),val=ln.slice(k+1).trim();if(!val){E.push(`${L}: ${id} has an empty value`);return}let m;
+if(m=id.match(/^([A-Z])$/)){if(cats[id])E.push(`${L}: duplicate category ${id}`);else cats[id]=val}
+else if(m=id.match(/^([A-Z])(\d+)$/)){ws[id]=ws[id]||{L:m[1]};if(ws[id].w)E.push(`${L}: duplicate word ${id}`);else ws[id].w=val}
+else if(m=id.match(/^([A-Z])([AB])(\d+)$/)){const key=m[1]+m[3],f=m[2]=='A'?'cc':'p';ws[key]=ws[key]||{L:m[1]};if(ws[key][f])E.push(`${L}: duplicate clue ${id}`);else ws[key][f]=val}
+else E.push(`${L}: invalid identifier "${id}"`)});
+const W=[];Object.keys(ws).sort((a,b)=>a[0]==b[0]?parseInt(a.slice(1))-parseInt(b.slice(1)):a<b?-1:1).forEach(k=>{const o=ws[k],n=k.slice(1),L=o.L;
+if(!o.w){E.push(`Orphaned clue for ${k} (word ${k} is missing)`);return}
+if(!cats[L]){E.push(`Word ${k} has no category header "${L} = ..."`);return}
+if(!o.cc)E.push(`Word ${k} is missing its category clue ${L}A${n}`);if(!o.p)E.push(`Word ${k} is missing its passive clue ${L}B${n}`);
+if(o.cc&&o.p)W.push({c:cats[L],w:o.w,cc:o.cc,p:o.p})});
+if(!W.length&&!E.length)E.push('No usable words found');return{E,W,cats}}
+// Copy the AI word-database prompt for generating custom import data.
+const WORD_DATABASE_PROMPT = 'Act as a word database generator for Find the Imposter 3.0. First, ask me how many words I want in each category, then ask how many categories I need and their names. Generate the requested number of unique, familiar words for each category, with two suitable clues for every word: a category clue (a broad hint that helps identify the category) and a passive clue (an indirect hint describing the word without revealing it). Show me the complete generated lists for review and allow edits. Do not create the final import format until I explicitly approve. After approval, convert everything into the exact import format supported by Find the Imposter 3.0: use A = Category Name, A1 = Word, AA1 = Category Clue, AB1 = Passive Clue; use B, B1, BA1, BB1 for the second category, C for the third, and continue alphabetically. Number words sequentially within each category, starting from 1. Every word must have all three entries (word, category clue and passive clue). Put each assignment on a separate line using the exact "IDENTIFIER = VALUE" syntax. Finally, output only the complete import-ready data in one copyable code block, with no explanations or extra formatting. Ensure every identifier follows the game\'s actual import parser rules.';
+let promptManual=false;
+function legacyCopy(txt){
+  const ta=document.createElement('textarea');
+  ta.value=txt;ta.style.cssText='position:fixed;top:0;left:0;width:1px;height:1px;opacity:0;font-size:16px';
+  document.body.appendChild(ta);ta.focus();ta.select();ta.setSelectionRange(0,txt.length);
+  let ok=false;try{ok=document.execCommand('copy')}catch(e){}
+  ta.remove();return ok;
+}
+async function copyWordDatabasePrompt(){
+  let ok=false;
+  try{if(navigator.clipboard&&navigator.clipboard.writeText){await navigator.clipboard.writeText(WORD_DATABASE_PROMPT);ok=true}}catch(e){}
+  if(!ok)ok=legacyCopy(WORD_DATABASE_PROMPT);
+  promptManual=!ok;
+  notice=ok?'Prompt copied! Paste it into ChatGPT or any AI, then paste the AI\'s final code block here.':'Automatic copy was blocked. Press and hold in the box below, choose Select all, then Copy.';
+  render();scrollTo(0,0);
+}
+// ---------- screens
+const V={};
+V.home=()=>`<div class=c><div class=big>🕵️</div><h1>Find the Imposter 3.0</h1><p class=m>A pass-the-phone party game of secrets and suspicion</p></div>${nb()}<div class=card><h3>🎮 Choose game mode</h3><p class=m>Local play works offline. Hybrid play connects multiple phones through Supabase.</p><button class=btn onclick="go('setup')">LOCAL MULTIPLAYER</button><button class=btn sec onclick="go('cloudhome')">HYBRID ONLINE MULTIPLAYER</button></div>${foot(`<button class="btn sec" onclick="go('how')">How to play</button>`)}`;
+const sec=(n,t,b,o)=>`<details class=acc${o?' open':''}><summary><span class=num>${n}</span><span>${t}</span></summary><div class=bd>${b}</div></details>`;
+const rc=(r,a)=>`<div class=rc style="border-left:6px solid ${ROLE[r][1]}"><div>${tag(r)}</div><ul>${a.map(x=>`<li>${x}</li>`).join('')}</ul></div>`;
+const ex=t=>`<div class=ex>${t}</div>`;
+const stl=(v,T)=>T>0?Math.min(10,Math.max(0,Math.round(10*(T-v)/T))):10;
+const fp=n=>n>0?`+${n}`:`${n}`;
+const orList=m=>m<2?'1':[...Array(m).keys()].map(k=>k+1).slice(0,-1).join(', ')+' or '+m;
+V.how=()=>{
+const polRows=[[3,4],[5,9],[10,14],[15,19],[20,24]].map(([a,b])=>`<tr><td>${a}–${b}</td><td><b>${polFor(a,1)}</b></td></tr>`).join('');
+const chRows=[3,4,5,6,7,8,9,10,15,20,24].map(n=>`<tr><td>${n}</td><td>${polFor(n,1)}</td><td>${orList(maxFor(n,1))}</td></tr>`).join('');
+const stRows=[[0,20],[2,20],[4,20],[6,20],[10,20],[16,20],[20,20]].map(([a,T])=>`<tr><td>${a}</td><td>${T}</td><td>${a/T*100}%</td><td><b>${stl(a,T)}</b></td></tr>`).join('');
+return hd('How to play','home')+
+`<p class=m>A complete guide. Tap a section to open or close it.</p>
+<div class=two><button class="btn sec" onclick="document.querySelectorAll('.acc').forEach(d=>d.open=true)">Expand all</button><button class="btn sec" onclick="document.querySelectorAll('.acc').forEach(d=>d.open=false)">Collapse all</button></div>
+<div class=card><h3>A cycle at a glance</h3><ol style="margin:6px 0;padding-left:22px"><li>Everyone discusses the secret word.</li><li>Police interrogate every other player once.</li><li>Police pick their suspects (up to the number of imposters left).</li><li>Everyone else votes privately for one person.</li><li>The top-voted player is eliminated.</li><li>The game checks who has won, or starts the next cycle.</li></ol></div>`+
+sec(1,'What is Find the Imposter?',`<p><b>Find the Imposter</b> is a multiplayer party game in which most players receive a secret word, while some players become imposters.</p><p>The imposters do not know the actual word. They receive clues and must pretend that they know it.</p><div class=rc style="border-left:6px solid #32B77A"><b>🟢 Innocent team goal:</b> discover the imposters.</div><div class=rc style="border-left:6px solid #EF5967"><b>🔴 Imposter team goal:</b> remain unidentified.</div><p>Police officers have special interrogation and voting abilities.</p><p>The game is designed to be played by passing a single phone between players.</p>`,1)+
+sec(2,'Understand the roles',`${rc('innocent',['Receives the real secret word.','Does not know who the imposters are.','Participates in discussion.','Answers police questions.','Votes for <b>one</b> suspected player.','Scores points for correct votes (and loses a point for wrong ones).','Wins when all imposters are eliminated.'])}${rc('imposter',['Does <b>not</b> receive the actual word.','Receives the category clue.','Receives an indirect passive clue.','Knows the other imposters.','Participates in discussion.','Tries to avoid suspicion.','Earns stealth points at the end of the match, based on how few votes they attracted.'])}${rc('police',['The police identity is publicly known.','Police receive the actual secret word.','Police interrogate every eligible player.','Police can select <b>multiple</b> suspected players.','Police votes are announced before ordinary voting.','Police earn special points based on their identification accuracy.'])}`,1)+
+sec(3,'How player and role counts work',`<p>Police are allocated automatically when <b>Police mode</b> is on. If it is off, nobody is police.</p><p><b>Police = floor(Total players ÷ 5)</b>, and always 0 below five players.</p><table><tr><th>Total players</th><th>Police</th></tr>${polRows}</table><p><b>Imposters:</b> the host chooses the number, but the choices depend on the player count.</p><p><b>Maximum imposters = min(floor(Total players ÷ 3), Total players − Police − 1)</b>. The minimum is 1, and at least one ordinary innocent always remains besides the police.</p><table><tr><th>Players</th><th>Police</th><th>Imposter choices</th></tr>${chRows}</table>${ex('<b>Example – 6 players:</b> 1 police. Either 1 imposter (4 innocents) or 2 imposters (3 innocents).<br><b>Example – 10 players, 3 imposters:</b> 2 police, 3 imposters, 5 innocents.')}<p class=m>If you change the number of players or turn Police mode on or off and your imposter number is no longer allowed, it is lowered automatically and you are told.</p>`)+
+sec(4,'Secret word and clue system',`<p>Innocents and police receive the actual secret word.</p><p>Imposters receive two hints instead: the <b>category clue</b> and a <b>passive clue</b>. They help imposters join the discussion without revealing the exact word. Every word in the library (including imported words) has its own clues.</p>${ex('<b>Secret word:</b> GLUE<br><b>Imposter sees</b><br>Category: HOME ITEMS<br>Passive clue: Used in paper crafts and school projects')}`)+
+sec(5,'Secret role reveal',`<ol><li>The app announces the publicly known police.</li><li>The phone is passed to the next player.</li><li>The player taps <b>I AM (NAME)</b> to confirm their identity.</li><li>Their secret role appears.</li><li>They memorise their information.</li><li>They tap <b>HIDE MY ROLE</b>.</li><li>The phone is passed on.</li><li>Repeat until everyone has seen their role.</li></ol><p>Never tap the confirm button for someone else, and make sure nobody sees the screen over your shoulder.</p>`)+
+sec(6,'Discussion phase',`<p>Discussion runs in rounds (10 by default; the host can change this in Settings). In one round, every <b>currently active</b> player gets one chance to speak.</p>${ex('With 6 active players, one round = 6 speaking turns. With 10 rounds that is up to 60 turns.')}<p>Talk about things related to the secret word without saying it directly. Imposters use the category and passive clue to blend in. There is no countdown timer; tap <b>NEXT PLAYER</b> when someone has finished. The host can also end the discussion early.</p>`)+
+sec(7,'Police interrogation',`<p>After the discussion, the police question the other active players. They ask <b>exactly one question per eligible non-police player</b>. For example:</p><ul><li>Where can this thing normally be found?</li><li>What is its main purpose?</li><li>What is it commonly associated with?</li><li>How is it normally used?</li><li>Can you describe something related to it?</li></ul><p>Players answer out loud. The app tracks who has answered; tap <b>MARK AS ANSWERED</b> after each one. If the host allows it, a question can be skipped. When everyone is done, police open their ballot.</p><p class=m>If there are no police in the game, this step is skipped.</p>`)+
+sec(8,'Police multi-suspect selection',`<p>Unlike regular players, the police can select <b>several</b> suspects. All police share <b>one team ballot</b>; the lead officer (rotating each cycle) taps the screen, and the other officers help decide.</p><p><b>Maximum selections = the number of imposters still active.</b> It is a maximum, not a requirement: select at least 1 and up to that number.</p><table><tr><th>Active imposters</th><th>Police may select</th></tr><tr><td>1</td><td>up to 1</td></tr><tr><td>2</td><td>up to 2</td></tr><tr><td>3</td><td>up to 3</td></tr></table><ol><li>The screen shows <b>SELECTED: 0 / 2</b> (for example).</li><li>Tap a player card to select it (✓). Tap again to deselect.</li><li>When the limit is reached, the other cards are locked.</li><li>Police cannot select themselves or other police.</li><li>Tap <b>CONFIRM POLICE VOTES</b>. The choice is locked.</li></ol><p>The suspects are announced publicly <b>before</b> ordinary voting. Each selected suspect gets exactly <b>one</b> police-team vote. Police do not cast any other ballot. Being suspected never shows anyone’s real role.</p>`)+
+sec(9,'Regular voting and ties',`<p>Every active <b>non-police</b> player votes for exactly <b>ONE</b> person, privately, by passing the phone. You cannot vote for yourself or for eliminated players, and a submitted vote cannot be changed. Police officers are protected and never appear on ordinary voting or revoting ballots.</p><p><b>Total votes = police nomination votes + ordinary votes.</b> The player with the highest total is eliminated.</p>${ex('Police pick Ann and Raj (1 vote each). Then 4 ordinary players vote: Ann 2, Raj 1, Tom 1. Totals: Ann 3, Raj 2, Tom 1. Ann is eliminated.')}<p><b>Ties:</b> if the top spot is tied, only the tied players are on the revote ballot. The police do <b>not</b> vote again and their nominations are not counted twice. All non-police players vote again, privately. If it is tied again, nobody is eliminated this cycle.</p>`)+
+sec(10,'Imposter elimination',`<p>When an imposter is caught by the vote, they are eliminated immediately. Their role is revealed on the elimination screen, and the game checks the normal winning conditions.</p><p>There is no final-word guess or special last chance.</p>`)+
+sec(11,'Scoring',`<p>Scores are worked out <b>once, when the match ends</b>, and added to your running total. There are no points for surviving a cycle or winning. (Wins are still counted separately in the scoreboard.)</p><div class=rc style="border-left:6px solid #4C9FF2"><b>🔵 Police</b> (shared team award, once per accusation cycle)<ul><li>Each suspect who is really an imposter: <b>+5</b></li><li>Each suspect who is not an imposter: <b>−4</b></li><li>Award = the total, but never below <b>0</b>. Police never lose saved points.</li><li>Every police officer active in that cycle gets the same award.</li></ul></div>${ex('1 correct + 2 wrong: 5 − 4 − 4 = −3 → <b>0</b> points<br>2 correct + 1 wrong: 10 − 4 = <b>+6</b><br>3 correct: <b>+15</b>')}<div class=rc style="border-left:6px solid #32B77A"><b>🟢 Innocent</b> (each ordinary vote, including revotes)<ul><li>Vote for an imposter: <b>+2</b></li><li>Vote for an innocent or a police officer: <b>−1</b></li><li>Innocent scores can go below zero.</li></ul></div><div class=rc style="border-left:6px solid #EF5967"><b>🔴 Imposter</b> (stealth score, up to <b>+10</b>)<ul><li>Vote % = votes you received ÷ all ordinary ballots in the match × 100</li><li>Points = round(10 × (1 − vote % ÷ 100)), between 0 and 10</li><li><b>0 points</b> if you were eliminated, or if the police ever included you in a suspect list (even if you survived).</li><li>Police nominations are not counted as ballots.</li></ul></div><table><tr><th>Votes</th><th>Ballots</th><th>Vote %</th><th>Points</th></tr>${stRows}</table><p class=m>After each match a full score breakdown is shown for every player.</p>`)+
+sec(12,'Winning',`<ul><li><b>Innocents win</b> when all imposters are eliminated.</li><li><b>Imposters win</b> when the remaining imposters equal or outnumber all remaining other players (police included).</li></ul>${ex('4 players left: 2 imposters and 2 others → imposters win. 5 players left: 2 imposters and 3 others → play continues.')}`)
+};
+V.setup=()=>{const e=chk();return hd('Game Setup','home')+nb()+card('👥 Players',`${nP()} Players`,'players','Manage Players')+card('🏷️ Categories',`${pool().length} Categories Selected`,'cats','Choose Categories')+card('⚙️ Settings',`Imposters: ${S.set.imp} · Police: ${polN()} · Rounds: ${S.set.rounds}`,'sets','Game Settings')+card('🗂️ Management','Scores, word library, reset','mgmt','Open Management')+(e?`<p class=err>${e}</p>`:'')+foot(`<button class=btn ${e?'disabled':''} onclick="go('review')">REVIEW AND CONTINUE</button>`)};
+V.players=()=>hd('Players','setup')+nb()+`<p class=m>${nP()} players → Police ${polN()} · Imposters allowed 1–${maxImp()}</p>`+(S.players.length?'':'<p class=m>Add players to begin.</p>')+S.players.map((p,i)=>`<div class=card><div class=row><input value="${esc(p)}" aria-label="Player name" onchange="A('ren',${i},this.value)">${cb('d'+i,'🗑','ib','del',i)}</div></div>`).join('')+`<div class=card><div class=row><input id=np placeholder="Player ${nP()+1}"><button class=ib aria-label="Add player" onclick="A('add',document.getElementById('np').value)">＋</button></div></div>`;
+V.cats=()=>hd('Categories','setup',`<button class=ib onclick="go('imp')">Import</button>`)+`<input placeholder="Search" oninput="flt(this.value)" style="margin:8px 0"><div class="card cat ${S.cats.length==catNames().length?'sel':''}" onclick="A('allc')">${S.cats.length==catNames().length?'☑':'☐'} All Categories</div>`+catNames().map(c=>`<div class="card cat ${S.cats.includes(c)?'sel':''}" data-n="${esc(c.toLowerCase())}" onclick="A('cat','${esc(c).replace(/'/g,"\\'")}')">${S.cats.includes(c)?'☑':'☐'} ${esc(c)} <span class=m>(${words().filter(w=>w.c==c).length} words)</span></div>`).join('')+foot(`<p class=m style="margin:0">${S.cats.length} selected</p><button class=btn onclick="go('setup')">Save Selection</button>`);
+V.imp=()=>hd('Import Words','cats')+nb()+(promptManual?`<div class=card><h3>Copy this prompt manually</h3><textarea readonly style="min-height:140px" onfocus="this.select()">${esc(WORD_DATABASE_PROMPT)}</textarea></div>`:'')+`<p class=m>One assignment per line. A = category, A1 = word, AA1 = category clue, AB1 = passive clue.</p><textarea oninput="imp=this.value" placeholder="A = HOME ITEMS&#10;A1 = Glue&#10;AA1 = HOME ITEMS&#10;AB1 = Used in paper crafts">${esc(imp)}</textarea>`+foot(`<button class="btn sec" onclick="copyWordDatabasePrompt()">COPY AI WORD-GENERATION PROMPT</button><button class="btn sec" onclick="imp='';render()">Clear</button><button class=btn onclick="pv=parse(imp);go('prev')">Analyze Data</button>`);
+V.prev=()=>{const g={};pv.W.forEach(w=>(g[w.c]=g[w.c]||[]).push(w));return hd('Import Preview','imp')+`<div class=card><b>${Object.keys(g).length}</b> categories · <b>${pv.W.length}</b> words · <b class=${pv.E.length?'err':'ok'}>${pv.E.length}</b> errors</div>`+(pv.E.length?`<div class=card>${pv.E.map(e=>`<div class=err>• ${esc(e)}</div>`).join('')}</div>`:'')+Object.keys(g).map(c=>`<div class=card><h3>${esc(c)}</h3><table><tr><th>Word</th><th>Category clue</th><th>Passive clue</th></tr>${g[c].map(w=>`<tr><td>${esc(w.w)}</td><td>${esc(w.cc)}</td><td>${esc(w.p)}</td></tr>`).join('')}</table></div>`).join('')+foot(`<button class="btn sec" onclick="go('imp')">EDIT IMPORT</button><button class=btn ${pv.E.length?'disabled':''} onclick="A('doimp')">IMPORT DATA</button>`)};
+const st=(l,k,val,note)=>`<div class=row><span>${l}${note?`<br><span class=m>${note}</span>`:''}</span><span><button class=ib onclick="A('st','${k}',-1)">−</button> <b>${val}</b> <button class=ib onclick="A('st','${k}',1)">+</button></span></div>`;
+const tg=(l,k,note)=>`<div class=row><span>${l}${note?`<br><span class=m>${note}</span>`:''}</span><button class=ib onclick="A('tg','${k}')">${S.set[k]?'ON':'OFF'}</button></div>`;
+V.sets=()=>{const mx=maxImp();return hd('Game Settings','setup')+nb()+`<div class=card><h3>Roles</h3>${tg('Police mode','police',nP()<5?'Needs 5+ players':'')}<div class=row><span>Police count</span><b>${polN()}</b></div><div class=row><span>Imposters<br><span class=m>Allowed: 1–${mx} for ${nP()} players</span></span><span><button class=ib aria-label="Fewer imposters" ${S.set.imp<=1?'disabled':''} onclick="A('st','imp',-1)">−</button> <b>${S.set.imp}</b> <button class=ib aria-label="More imposters" ${S.set.imp>=mx?'disabled':''} onclick="A('st','imp',1)">+</button></span></div>${S.set.imp>mx?`<p class=err>Too many imposters for ${nP()} players.</p>`:''}<p class=m>Innocents: ${Math.max(0,nP()-polN()-S.set.imp)}</p></div><div class=card><h3>Discussion</h3>${st('Rounds','rounds',S.set.rounds)}<p class=m>No timer.</p></div><div class=card><h3>Interrogation & elimination</h3>${tg('Allow skipped interrogations','skip')}<p class=m>Caught imposters are always eliminated immediately. There is no final-word guess.</p></div>`};
+V.mgmt=()=>{const sc=Object.entries(S.scores).sort((a,b)=>b[1].pts-a[1].pts);return hd('Management','setup')+`<div class=card><h3>Scoreboard</h3>${sb(sc)}</div><div class=card><h3>Word library</h3>${catNames().map(c=>`<div class=row><span>${esc(c)}</span><span class=m>${words().filter(w=>w.c==c).length}${S.custom.some(w=>w.c==c)?' · custom':''}</span></div>`).join('')}<button class="btn sec" onclick="exp=!exp;render()">Export imported words (JSON)</button>${exp?`<textarea readonly style="min-height:120px">${esc(JSON.stringify(S.custom))}</textarea>`:''}</div><div class=card><h3>History</h3>${S.hist.length?S.hist.slice(-8).reverse().map(h=>`<div class=m>${esc(h)}</div>`).join(''):'<p class=m>Your game history will appear here.</p>'}</div><div class=card><h3>Reset</h3>${cb('r1','Reset scoreboard','btn dng','rs','1')}${cb('r2','Delete imported words','btn dng','rs','2')}${cb('r3','Clear history','btn dng','rs','3')}${cb('r4','Reset everything','btn dng','rs','4')}</div>`};
+function sb(sc){if(!sc.length)return'<p class=m>No scores yet.</p>';let r=0,last=null;return`<table><tr><th>#</th><th>Player</th><th>Pts</th><th>Wins</th><th>Imp</th><th>Inn</th><th>👮</th></tr>${sc.map(([n,s],i)=>{if(s.pts!==last){r=i+1;last=s.pts}return`<tr><td>${r}</td><td>${esc(n)}</td><td><b>${s.pts}</b></td><td>${s.w||0}</td><td>${s.iw||0}</td><td>${s.nw||0}</td><td>${s.pc||0}</td></tr>`}).join('')}</table>`}
+V.review=()=>{const n=nP(),e=chk(),w=S.set.imp>=n-S.set.imp;return hd('Game Review','setup')+nb()+`<div class=card><p>Players: <b>${n}</b><br>Categories: ${pool().map(esc).join(', ')}<br>Police: <b>${polN()}</b> · Imposters: <b>${S.set.imp}</b> · Innocents: <b>${Math.max(0,n-polN()-S.set.imp)}</b><br>Discussion rounds: <b>${S.set.rounds}</b><br>Interrogation: <b>${polN()?'Enabled':'Off'}</b></p></div>${e?`<p class=err>${e}</p>`:''}${w?'<p class=w>⚠️ Extreme imposter-favoured configuration: imposters could win quickly.</p>':''}`+foot(`<button class=btn ${e?'disabled':''} onclick="start()">START MATCH</button>`)};
+// ---------- match
+function start(){const e=chk();if(e){if(S.set.imp>maxImp())fixImp();else notice=e;save();return go('setup')}
+const n=nP(),ids=shuf([...Array(n).keys()]),pc=polN(),ic=S.set.imp,roles={};
+ids.forEach((id,k)=>roles[id]=k<pc?'police':k<pc+ic?'imposter':'innocent');
+const c=pool()[rnd(pool().length)];let ws=words().filter(w=>w.c==c);const fresh=ws.filter(w=>!S.used.includes(w.w));if(fresh.length)ws=fresh;const W=ws[rnd(ws.length)];
+S.used=[...S.used,W.w].slice(-20);save();
+M={roles,W,act:[...Array(n).keys()],rev:0,st:'pass',round:1,spk:0,start:rnd(n),cycle:1,ev:[],log:[],gone:[],tb:0,nom:null,msg:'',all:[],polHist:[],psel:[],policeTargets:[],locked:0,done:0,tl:''};go(pc?'pol':'rev')}
+V.pol=()=>mh('Public announcement')+`<div class=c><div class=big>🔵</div><h3>POLICE OFFICERS</h3>${M.act.filter(i=>role(i)=='police').map(i=>`<div class=big2>${nm(i)}</div>`).join('')}<p class=m>Everyone can see this. No other roles are shown.</p></div>`+foot(`<button class=btn onclick="go('rev')">Continue to private roles</button>`);
+V.rev=()=>{const i=M.rev,r=role(i);if(M.st=='pass')return mh('Pass the phone')+`<div class=c><div class=big>📱</div><p class=m>Next player</p><div class=big2>${nm(i)}</div></div>`+foot(`<button class=btn onclick="M.st='show';render()">I AM ${nm(i).toUpperCase()}</button>`);
+let b;if(r=='imposter'){const mates=M.act.filter(j=>j!=i&&role(j)=='imposter');b=`<p>Category: <b>${esc(M.W.cc.toUpperCase())}</b></p><p>Passive clue: <b>${esc(M.W.p)}</b></p><p>Teammates: <b>${mates.length?mates.map(nm).join(', '):'none — you are alone'}</b></p><p class=m>You do not know the secret word.</p>`}
+else b=`<p>Secret word</p><div class=big2>${esc(M.W.w)}</div><p class=m>${r=='police'?'Your identity is public. You lead the interrogation.':'Remember it. Do not reveal it directly.'}</p>`;
+return mh('Your role')+`<div class=card style="border-color:${ROLE[r][1]};text-align:center"><h2>You are ${tag(r)}</h2>${b}</div>`+foot(`<button class=btn onclick="A('hide')">HIDE MY ROLE</button>`)};
+V.ready=()=>mh('Ready')+`<div class=c><div class=big>✅</div><h3>ALL ROLES REVEALED</h3></div>`+foot(`<button class=btn onclick="go('disc')">BEGIN DISCUSSION</button>`);
+const order=()=>{const a=M.act,s=(M.start+M.round-1)%a.length;return[...a.slice(s),...a.slice(0,s)]};
+V.disc=()=>{const o=order();return mh(`Discussion round ${M.round} of ${S.set.rounds}`)+`<p class=m style="text-align:center">Current speaker</p><div class=big2>${nm(o[M.spk])}</div><div class=card>${o.map((i,k)=>`<div class=row style="${k==M.spk?'color:#B99AFF;font-weight:700':k<M.spk?'opacity:.45':''}"><span>${k+1}. ${nm(i)}</span></div>`).join('')}</div><p class=m>${M.act.length} active players · speak aloud, no timer.</p>`+foot(`<button class=btn onclick="A('next')">NEXT PLAYER</button>${cb('ed','End Discussion','btn sec','ed')}`)};
+function endDisc(){const pol=M.act.filter(i=>role(i)=='police');M.nom=null;M.policeTargets=[];if(pol.length){M.q={};M.act.filter(i=>role(i)!='police').forEach(i=>M.q[i]=0);go('int')}else startVote(null)}
+const QS=['Where can this thing normally be found?','What is its main purpose?','What is it commonly associated with?','How is it normally used?','Can you describe something related to it?'];
+const impLeft=()=>M.act.filter(i=>role(i)=='imposter').length,leadOf=()=>{const p=M.act.filter(i=>role(i)=='police');return p[(M.cycle-1)%p.length]};
+V.int=()=>{const ids=Object.keys(M.q).map(Number),done=ids.every(i=>M.q[i]);return mh('Police interrogation')+`<p class=m>Police only: ask each player below exactly one question.</p><div class=card>${QS.map(q=>`<div class=m>• ${q}</div>`).join('')}</div>`+ids.map(i=>`<div class=card><div class=row><b>${nm(i)}</b><span class=${M.q[i]?'ok':'m'}>${['Pending','Completed','Skipped'][M.q[i]]}</span></div>${M.q[i]?'':`<button class=btn onclick="M.q[${i}]=1;render()">MARK AS ANSWERED</button>${S.set.skip?`<button class="btn sec" onclick="M.q[${i}]=2;render()">Skip (host override)</button>`:''}`}</div>`).join('')+foot(`<button class=btn ${done?'':'disabled'} onclick="A('toacc')">COMPLETE INTERROGATION</button>`)};
+V.acc=()=>{const K=impLeft(),c=M.psel.length,el=M.act.filter(i=>role(i)!='police');return mh('Police')+`<div style="text-align:center"><h2 style="margin:6px 0;color:#4C9FF2">🔵 POLICE INVESTIGATION</h2><p class=m>Select the players you suspect of being imposters.</p><p class=sm>Lead officer: <b>${nm(M.lead)}</b>. Other officers may advise.</p><div class=cnt aria-live=polite>SELECTED: ${c} / ${K}</div></div>`+el.map(i=>{const on=M.psel.includes(i),dis=!on&&c>=K;return`<div class="card cat pc ${on?'sel pon':''} ${dis?'dis':''}" role=checkbox aria-checked=${on} aria-disabled=${dis} onclick="A('ptog',${i})"><span>${nm(i)}</span><b>${on?'✓ SELECTED':dis?'🔒 LIMIT REACHED':'☐'}</b></div>`}).join('')+foot(`<button class=btn ${c<1?'disabled':''} onclick="A('accuse')">CONFIRM POLICE VOTES</button>`)};
+V.pann=()=>mh('Police announcement')+`<div class=c><div class=big>🔵</div><h3>THE POLICE SUSPECT</h3>${M.policeTargets.map(i=>`<div class=big2>${nm(i)}</div>`).join('')}<p class=m>Each suspect now carries one police-team vote. Roles stay hidden. Next, every non-police player votes privately for ONE person.</p></div>`+foot(`<button class=btn onclick="startVote(null)">BEGIN PRIVATE VOTING</button>`);
+function startVote(cand){M.ballots=[];M.vq=M.act.filter(i=>role(i)!='police');M.vi=0;M.vst='pass';M.cand=cand||null;M.sel=null;if(!M.vq.length)return tally();go('vote')}
+V.vote=()=>{const i=M.vq[M.vi],ann=M.nom&&!M.tb&&M.vi==0&&M.vst=='pass'?`<div class=card style="border-color:#4C9FF2"><b>🔵 POLICE SUSPECTS: ${M.nom.t.map(nm).join(', ')}</b><br><span class=m>One police-team vote each is locked in.</span></div>`:'';
+if(M.vst=='pass')return mh(M.tb?'Revote':'Voting')+ann+`<div class=c><div class=big>📱</div><p class=m>Next voter</p><div class=big2>${nm(i)}</div></div>`+foot(`<button class=btn onclick="M.vst='pick';M.sel=null;render()">I AM ${nm(i).toUpperCase()}</button>`);
+return mh('Cast your vote')+`<p class=m>${nm(i)}, vote privately for exactly ONE player.</p>`+(M.cand||M.act).filter(j=>j!=i&&role(j)!='police').map(j=>`<div class="card cat ${M.sel===j?'sel':''}" role=radio aria-checked=${M.sel===j} onclick="M.sel=${j};render()">${M.sel===j?'✓ ':''}${nm(j)}</div>`).join('')+foot(`<button class=btn ${M.sel==null?'disabled':''} onclick="A('cast')">CONFIRM VOTE</button>`)};
+V.tie=()=>mh('Voting tie')+`<div class=c><div class=big>⚖️</div><h3>VOTING TIE</h3><p class=m>Revote between:</p>${M.tied.map(i=>`<div class=big2>${nm(i)}</div>`).join('')}<p class=m>Only non-police players vote again. If tied again, nobody is eliminated.</p></div>`+foot(`<button class=btn onclick="startVote(M.tied)">START REVOTE</button>`);
+function tally(){const rv=M.tb?1:0;
+M.ballots.forEach(b=>M.all.push({id:'b'+(M.all.length+1),c:M.cycle,rv,v:b.v,t:b.t}));
+const c={};if(!rv&&M.nom)M.nom.t.filter(t=>role(t)!='police').forEach(t=>c[t]=(c[t]||0)+1);M.ballots.forEach(b=>{if(role(b.t)!='police')c[b.t]=(c[b.t]||0)+1});
+const ks=Object.keys(c).map(Number);M.tl=ks.map(k=>`${S.players[k]} ${c[k]}`).join(' · ');M.log.push(`Cycle ${M.cycle}${rv?' revote':''} tally: ${M.tl||'no votes'}`);
+if(!ks.length){M.tb=0;M.out=null;M.msg='No votes were cast — nobody is eliminated.';return go('elim')}
+const mx=Math.max(...ks.map(k=>c[k])),top=ks.filter(k=>c[k]==mx);
+if(top.length==1)return pick(top[0]);if(!rv){M.tb=1;M.tied=top;return go('tie')}
+M.tb=0;M.out=null;M.msg='Tied again — nobody is eliminated this cycle.';M.log.push(`Cycle ${M.cycle}: tie, no elimination`);go('elim')}
+function pick(t){M.tb=0;M.out=t;fin(t,'')}
+function fin(t,note){M.act=M.act.filter(i=>i!=t);M.gone.push(t);M.msg=note;M.log.push(`Cycle ${M.cycle}: ${S.players[t]} eliminated (${role(t)})`);go('elim')}
+V.elim=()=>mh('Elimination')+`<div class=c>${M.out==null?`<div class=big>🤝</div><h3>${esc(M.msg)}</h3>`:`<div class=big>🚪</div><h3>${nm(M.out)} HAS BEEN ELIMINATED</h3><p>${tag(role(M.out))}</p>${M.msg?`<p class=m>${esc(M.msg)}</p>`:''}`}</div>${M.tl?`<div class=card><span class=m>Vote totals (police + ordinary)</span><br>${esc(M.tl)}</div>`:''}<div class=card>Active: ${M.act.length} · Imposters left: ${impLeft()}</div>`+foot(`<button class=btn onclick="A('cont')">CONTINUE</button>`);
+// ---------- scoring (single, central, calculated once at match end)
+function scoreMatch(){const ev=[],seen=new Set(),bd={};
+const push=e=>{if(seen.has(e.id))return;seen.add(e.id);ev.push(e)};
+S.players.forEach((_,i)=>bd[i]={r:role(i),pts:0,cor:0,inc:0,cyc:[]});
+M.polHist.forEach(r=>{const cor=r.t.filter(t=>role(t)=='imposter').length,inc=r.t.length-cor,raw=cor*5-inc*4,aw=Math.max(0,raw);
+ r.police.forEach(p=>{push({id:`pol-${r.c}-${p}`,i:p,pts:aw,kind:'police',c:r.c});bd[p].cyc.push({c:r.c,cor,inc,raw,aw});bd[p].cor+=cor;bd[p].inc+=inc})});
+M.all.forEach(b=>{if(role(b.v)!='innocent')return;const ok=role(b.t)=='imposter';push({id:'inn-'+b.id,i:b.v,pts:ok?2:-1,kind:'innocent',c:b.c});ok?bd[b.v].cor++:bd[b.v].inc++});
+const T=M.all.length,flagged=new Set();M.polHist.forEach(r=>r.t.forEach(t=>flagged.add(t)));
+S.players.forEach((_,i)=>{if(role(i)!='imposter')return;const vr=M.all.filter(b=>b.t==i).length,z=[];if(M.gone.includes(i))z.push('eliminated');if(flagged.has(i))z.push('identified by police');
+ const sp=z.length?0:stl(vr,T);push({id:'imp-'+i,i,pts:sp,kind:'imposter'});Object.assign(bd[i],{v:vr,T,pct:T?Math.round(vr/T*1000)/10:0,z:z.join(' + ')})});
+const tot={};ev.forEach(e=>tot[e.i]=(tot[e.i]||0)+e.pts);S.players.forEach((_,i)=>{bd[i].pts=tot[i]||0});return{ev,bd,tot}}
+function endMatch(team,note){if(M.done)return;M.done=1;const r=scoreMatch();M.ev=r.ev;M.bd=r.bd;M.tot=r.tot;
+S.players.forEach((n,i)=>{const s=S.scores[n]=S.scores[n]||{pts:0,w:0,iw:0,nw:0,pc:0};s.pts=(s.pts||0)+(r.tot[i]||0);if(role(i)=='police')s.pc=(s.pc||0)+r.bd[i].cor;if((team=='imposters')==(role(i)=='imposter')){s.w=(s.w||0)+1;team=='imposters'?s.iw=(s.iw||0)+1:s.nw=(s.nw||0)+1}});
+S.hist.push(`${new Date().toLocaleDateString()}: ${team} won · word ${M.W.w} (${M.W.c})`);S.hist=S.hist.slice(-40);
+S.mlog=(Array.isArray(S.mlog)?S.mlog:[]).concat([{d:new Date().toISOString(),w:M.W.w,win:team,p:S.players.map((n,i)=>({n,r:role(i),pts:r.tot[i]||0})),pol:M.polHist.map(h=>({c:h.c,t:h.t.map(x=>S.players[x])})),b:M.all.map(x=>[x.c,x.rv,S.players[x.v],S.players[x.t]])}]).slice(-10);
+save();M.win=team;M.note=note||'';go('end')}
+const det=i=>{const b=M.bd[i];if(b.r=='police')return b.cyc.length?b.cyc.map(c=>`Cycle ${c.c}: ${c.cor} correct (+${c.cor*5}) · ${c.inc} incorrect (−${c.inc*4}) · raw ${c.raw} → awarded <b>${fp(c.aw)}</b>`).join('<br>'):'No police accusation was made (0 awarded).';
+if(b.r=='innocent')return b.cor+b.inc?`Correct votes: ${b.cor} (+${2*b.cor}) · Incorrect votes: ${b.inc} (−${b.inc}) · Total <b>${fp(b.pts)}</b>`:'No ballots cast (0).';
+return`Votes received: ${b.v} of ${b.T} ballots (${b.pct}%) · Stealth score <b>${b.pts}</b>/10${b.z?`<br>Zero-point rule applied: ${b.z}.`:''}`};
+V.end=()=>{const sc=Object.entries(S.scores).sort((a,b)=>b[1].pts-a[1].pts);return`<div class=c style="padding:24px 0"><div class=big>${M.win=='imposters'?'🔴':'🟢'}</div><h1>${M.win=='imposters'?'IMPOSTERS':'INNOCENTS'} HAVE WON!</h1><p class=m>${esc(M.note)}</p></div><div class=card><p>Secret word: <b>${esc(M.W.w)}</b><br>Category: ${esc(M.W.cc)}<br>Imposter clue: ${esc(M.W.p)}</p></div><div class=card><h3>Score breakdown</h3><table><tr><th>Player</th><th>Role</th><th>Points earned</th></tr>${S.players.map((n,i)=>`<tr><td>${esc(n)}</td><td>${tag(role(i))}</td><td><b>${fp(M.tot[i]||0)}</b></td></tr>`).join('')}</table></div>${S.players.map((n,i)=>`<div class=card style="border-left:5px solid ${ROLE[role(i)][1]}"><b>${esc(n)}</b> ${tag(role(i))}<div class=m style="margin-top:6px">${det(i)}</div></div>`).join('')}<div class=card><h3>Voting history</h3>${M.log.map(l=>`<div class=m>${esc(l)}</div>`).join('')||'<p class=m>None</p>'}</div><div class=card><h3>Scoreboard</h3>${sb(sc)}</div>`+foot(`<button class=btn onclick="start()">PLAY AGAIN</button><button class="btn sec" onclick="go('setup')">CHANGE SETTINGS</button><button class="btn sec" onclick="go('home')">HOME</button>`)};
+// ---------- actions
+function A(a,x,y){switch(a){
+case'ren':{const n=(x===undefined?'':y).trim();const i=x;if(n&&!S.players.some((p,j)=>j!=i&&p.toLowerCase()==n.toLowerCase()))S.players[i]=n;break}
+case'add':{let n=(x||'').trim()||'Player '+(nP()+1);while(S.players.some(p=>p.toLowerCase()==n.toLowerCase()))n+=' 2';if(nP()<24)S.players.push(n);fixImp();break}
+case'del':if(!cfm(y))return;S.players.splice(x,1);fixImp();break;
+case'allc':S.cats=S.cats.length==catNames().length?[]:catNames();break;
+case'cat':S.cats=S.cats.includes(x)?S.cats.filter(c=>c!=x):[...S.cats,x];break;
+case'doimp':S.custom=S.custom.filter(o=>!pv.W.some(w=>w.c==o.c&&w.w==o.w)).concat(pv.W);pv.W.forEach(w=>{if(!S.cats.includes(w.c))S.cats.push(w.c)});imp='';save();return go('cats');
+case'st':S.set[x]=Math.max(1,Math.min(x=='imp'?maxImp():20,S.set[x]+y));break;
+case'tg':S.set[x]=S.set[x]?0:1;fixImp();break;
+case'rs':if(!cfm(y))return;if(x=='1'||x=='4')S.scores={};if(x=='2'||x=='4'){S.custom=[];S.cats=catNames()}if(x=='3'||x=='4'){S.hist=[];S.mlog=[]}break;
+case'quit':if(!cfm(y))return;M=null;return go('home');
+case'hide':M.rev++;M.st='pass';return go(M.rev>=nP()?'ready':'rev');
+case'next':M.spk++;if(M.spk>=M.act.length){M.spk=0;M.round++;if(M.round>S.set.rounds)return endDisc()}break;
+case'ed':if(!cfm(y))return;return endDisc();
+case'toacc':if(!Object.values(M.q).every(Boolean))break;M.psel=[];M.locked=0;M.lead=leadOf();return go('acc');
+case'ptog':{if(v!='acc'||M.locked)break;const i=x,K=impLeft();if(!M.act.includes(i)||role(i)=='police')break;const k=M.psel.indexOf(i);if(k>=0)M.psel.splice(k,1);else if(M.psel.length<K)M.psel.push(i);break}
+case'accuse':{if(v!='acc'||M.locked)return;const K=impLeft(),t=[...new Set(M.psel)].filter(i=>M.act.includes(i)&&role(i)!='police');if(t.length<1||t.length>K)return render();
+M.locked=1;M.policeTargets=t;M.nom={c:M.cycle,lead:M.lead,police:M.act.filter(i=>role(i)=='police'),t};M.polHist.push(M.nom);M.log.push(`Cycle ${M.cycle}: police suspect ${t.map(i=>S.players[i]).join(', ')}`);return go('pann')}
+case'cast':{if(v!='vote'||M.vst!='pick'||M.sel==null)break;const vr=M.vq[M.vi],ok=(M.cand||M.act).filter(j=>role(j)!='police');if(M.sel==vr||role(M.sel)=='police'||!M.act.includes(M.sel)||!ok.includes(M.sel)||M.ballots.some(b=>b.v==vr))break;
+M.ballots.push({v:vr,t:M.sel});M.vi++;M.vst='pass';M.sel=null;if(M.vi>=M.vq.length)return tally();break}
+case'cont':{const im=impLeft(),rest=M.act.length-im;if(!im)return endMatch('innocents','All imposters were caught.');if(im>=rest)return endMatch('imposters','Imposters reached parity.');M.cycle++;M.round=1;M.spk=0;M.start=rnd(M.act.length);M.nom=null;M.policeTargets=[];M.psel=[];M.locked=0;M.tb=0;M.cand=null;M.msg='';M.tl='';return go('disc')}
+}save();render()}
+function flt(q){q=q.toLowerCase();document.querySelectorAll('.cat[data-n]').forEach(e=>e.style.display=e.dataset.n.includes(q)?'':'none')}
+render();
+
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// Find the Imposter 3.0 — cloud lobby integration. Configure the two public values below.
+const FTI_CLOUD={url:'https://grftwenmhpqodhufcmyh.supabase.co',anonKey:'sb_publishable_H0IyviGgIv5SsayXhiZVzQ_soAe1PcB'};
+let FTI_SB=null,FTI_ROOM=null,FTI_PLAYER=null,FTI_CHANNEL=null,FTI_BUSY=false,FTI_LAST=null,FTI_ROOM_SETTINGS={police_enabled:true,imposter_count:1,discussion_rounds:10};
+function ftiReady(){return !!(FTI_CLOUD.url&&FTI_CLOUD.anonKey&&window.supabase?.createClient)}
+function ftiClient(){if(!ftiReady())throw Error('Cloud setup is incomplete. Add your Supabase Project URL and anon/public key in FTI_CLOUD.');if(!FTI_SB)FTI_SB=window.supabase.createClient(FTI_CLOUD.url,FTI_CLOUD.anonKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});return FTI_SB}
+async function ftiAuth(){const c=ftiClient();let {data:{session}}=await c.auth.getSession();if(!session){const r=await c.auth.signInAnonymously();if(r.error)throw r.error;session=r.data.session;}return session}
+async function ftiCall(action,payload={}){const c=ftiClient(),session=await ftiAuth();const {data,error}=await c.functions.invoke('fti-game',{body:{action,...payload},headers:{Authorization:'Bearer '+session.access_token}});if(error)throw error;if(!data?.ok)throw Error(data?.error||'Cloud request failed');return data.data}
+function ftiErr(e){return esc(e?.message||String(e))}
+function ftiCloudHome(){return hd('Hybrid Multiplayer','home')+`<div class=card><h3>☁️ Cloud game</h3><p class=m>One host phone can manage local players while remote players join from their own phones.</p><p class=m>Requires an internet connection and a configured Supabase project.</p><button class=btn onclick="go('cloudcreate')">CREATE ROOM</button><button class='btn sec' onclick="go('cloudjoin')">JOIN ROOM</button><button class='btn sec' onclick="go('setup')">LOCAL MULTIPLAYER INSTEAD</button></div><div class=card><h3>Connection setup</h3><p class=m id=fti-config-status>${ftiReady()?'Supabase configuration detected.':'Supabase is not configured on this copy.'}</p></div>`}
+function ftiCloudCreate(){return hd('Create Room','cloudhome')+nb()+`<div class=card><label>Host display name</label><input id=fti-host-name maxlength=24 placeholder='Host' value='Host'><label>Local players on this phone (one name per line)</label><textarea id=fti-local-names style='min-height:130px' placeholder='Player 1&#10;Player 2&#10;Player 3'></textarea><p class=m>These local players share the host phone. Remote players join with the Room ID.</p><label>Imposter count</label><input id=fti-imp-count type=number min=1 max=6 value='1'><label><input id=fti-police-enabled type=checkbox checked style='width:auto'> Enable police mode</label></div>`+foot(`<button class=btn onclick="ftiCreateRoom()">CREATE CLOUD ROOM</button>`)}
+function ftiCloudJoin(){return hd('Join Room','cloudhome')+nb()+`<div class=card><label>Room ID</label><input id=fti-room-code maxlength=10 autocapitalize=characters placeholder='FTI-82491'><label>Your display name</label><input id=fti-join-name maxlength=24 placeholder='Your name'><p class=m>You will join as a remote player using this phone.</p></div>`+foot(`<button class=btn onclick="ftiJoinRoom()">JOIN GAME</button>`)}
+V.cloudhome=ftiCloudHome;V.cloudcreate=ftiCloudCreate;V.cloudjoin=ftiCloudJoin;
+async function ftiCreateRoom(){if(FTI_BUSY)return;FTI_BUSY=true;window.FTI_FORM={h:$('#fti-host-name')?.value||'',l:$('#fti-local-names')?.value||''};try{const names=($('#fti-local-names')?.value||'').split(/\r?\n/).map(x=>x.trim()).filter(Boolean);if(names.length<3)throw Error('Add at least three local players before creating a hybrid room.');if(new Set(names.map(x=>x.toLowerCase())).size!==names.length)throw Error('Local player names must be unique.');FTI_ROOM_SETTINGS={police_enabled:!!$('#fti-police-enabled')?.checked,imposter_count:Number($('#fti-imp-count')?.value||1),discussion_rounds:S.set.rounds};const data=await ftiCall('create_room',{host_name:($('#fti-host-name')?.value||'Host').trim(),local_players:names});FTI_ROOM=data.room;FTI_PLAYER=data.host_player;go('cloudlobby');ftiWatch()}catch(e){notice='Cloud error: '+(e.message||e);go('cloudcreate');{const a=$('#fti-host-name'),b=$('#fti-local-names');if(a)a.value=window.FTI_FORM.h;if(b)b.value=window.FTI_FORM.l}}finally{FTI_BUSY=false}}
+async function ftiJoinRoom(){if(FTI_BUSY)return;FTI_BUSY=true;try{const code=($('#fti-room-code')?.value||'').trim().toUpperCase(),name=($('#fti-join-name')?.value||'').trim();if(!code||!name)throw Error('Enter the Room ID and your display name.');const data=await ftiCall('join_room',{room_code:code,display_name:name});FTI_ROOM=data.room;FTI_PLAYER=data.player;go('cloudlobby');ftiWatch()}catch(e){notice='Could not join: '+(e.message||e);go('cloudjoin')}finally{FTI_BUSY=false}}
+function ftiLobbyView(){return hd('Game Room','home')+nb()+`<div class=card><div class=row><h3>Room ID</h3><button class=ib onclick="ftiCopyRoom()">⧉</button></div><div class=big2>${esc(FTI_ROOM?.code||'—')}</div><p class=m>Share this code with remote players.</p><p class=m>Room status: <b class=ok>${esc(FTI_ROOM?.phase||'WAITING_FOR_PLAYERS')}</b></p></div><div class=card><div class=row><h3>Players</h3><button class=ib onclick="ftiRefresh()">↻</button></div><div id=fti-player-list>Loading players…</div></div><div class=card><p class=m id=fti-live-status>Connecting to live room updates…</p></div>${FTI_PLAYER?.is_host?`<button class=btn onclick="ftiHostStart()">START HYBRID MATCH</button>`:`<div class=card><b>Waiting for the host to start the match.</b></div>`}<button class='btn sec' onclick="ftiLeaveRoom()">LEAVE ROOM</button>`}
+V.cloudlobby=ftiLobbyView;
+let FTI_LOCAL_ROLE_INDEX=0,FTI_ROLE_REVEALED=false;
+function ftiCloudRoles(){const roles=FTI_LAST?.my_roles||[];if(!roles.length)return hd('Waiting for role','cloudlobby')+`<div class=card><p class=m>Waiting for the host to assign roles…</p></div>`;
+if(FTI_PLAYER?.is_host){const locals=roles.filter(r=>{const p=FTI_LAST.players.find(x=>x.id===r.player_id);return p?.is_local});const r=locals[FTI_LOCAL_ROLE_INDEX];if(!r)return hd('Roles distributed','cloudlobby')+`<div class=card><h3>Local role reveal complete</h3>${ftiReadyList()}</div>`+foot(`<button class=btn onclick="ftiHostPhase('DISCUSSION')">BEGIN DISCUSSION</button>`);const p=FTI_LAST.players.find(x=>x.id===r.player_id);return hd('Pass the phone','cloudlobby')+`<div class=c><p class=m>Local player ${FTI_LOCAL_ROLE_INDEX+1} of ${locals.length}</p><div class=big2>${esc(p?.display_name||'Player')}</div>${FTI_ROLE_REVEALED?`<div class=card>${tag(r.role)}${r.role==='imposter'?`<p>Category: <b>${esc(r.category)}</b></p><p>Passive clue: <b>${esc(r.passive_clue)}</b></p><p>Teammates: ${esc((r.teammate_names||[]).join(', ')||'None')}</p>`:`<div class=big2>${esc(r.secret_word||'')}</div>`}</div>`:'<p class=m>Make sure nobody else can see the screen.</p>'}</div>`+foot(FTI_ROLE_REVEALED?`<button class=btn onclick="ftiAckRole('${r.player_id}',true)">HIDE ROLE & CONTINUE</button>`:`<button class=btn onclick="FTI_ROLE_REVEALED=true;render()">REVEAL MY ROLE</button>`)}
+const r=roles[0];return hd('Your private role','cloudlobby')+`<div class=c><div class=big>🔐</div><h3>Your role is private</h3><div class=card>${tag(r.role)}${r.role==='imposter'?`<p>Category: <b>${esc(r.category)}</b></p><p>Passive clue: <b>${esc(r.passive_clue)}</b></p><p>Teammates: ${esc((r.teammate_names||[]).join(', ')||'None')}</p>`:`<div class=big2>${esc(r.secret_word||'')}</div>`}</div><p class=m>Only this phone receives your role.</p></div>`+foot(FTI_LAST.players.find(p=>p.id===FTI_LAST.me)?.ready?'<div class=card><b>Waiting for other players to complete.</b></div>':`<button class=btn onclick="ftiAckRole('${r.player_id}',false)">I HAVE MEMORISED MY ROLE</button>`)}
+V.cloudroles=ftiCloudRoles;
+async function ftiAckRole(playerId,isLocal){try{await ftiCall('role_ack',{room_id:FTI_ROOM.id,player_id:playerId});if(isLocal){FTI_LOCAL_ROLE_INDEX++;FTI_ROLE_REVEALED=false;await ftiRefresh();render()}else{await ftiRefresh();FTI_SIG='';await ftiRefresh()}}catch(e){notice='Could not confirm role: '+e.message;render()}}
+async function ftiHostPhase(phase){try{await ftiCall('host_phase',{room_id:FTI_ROOM.id,phase});FTI_SIG='';await ftiRefresh()}catch(e){notice=e.message;render()}}
+
+function ftiWatch(){try{localStorage.setItem('fti_room',FTI_ROOM.id)}catch(e){}if(FTI_CHANNEL&&FTI_SB){FTI_SB.removeChannel(FTI_CHANNEL);FTI_CHANNEL=null}try{const c=ftiClient();FTI_CHANNEL=c.channel('fti-room-'+FTI_ROOM.id).on('postgres_changes',{event:'*',schema:'public',table:'room_players',filter:'room_id=eq.'+FTI_ROOM.id},()=>ftiRefresh()).on('postgres_changes',{event:'*',schema:'public',table:'rooms',filter:'id=eq.'+FTI_ROOM.id},()=>ftiRefresh()).subscribe(s=>{const el=$('#fti-live-status');if(el)el.textContent=s==='SUBSCRIBED'?'Live room connected.':'Live connection: '+s;});}catch(e){}ftiRefresh()}
+async function ftiCopyRoom(){try{await navigator.clipboard.writeText(FTI_ROOM.code);notice='Room ID copied.';render()}catch(e){notice='Room ID: '+FTI_ROOM.code;render()}}
+async function ftiHostStart(force){try{const pw=words().filter(w=>pool().includes(w.c));if(!pw.length)throw Error('Select at least one category with words in local setup first.');await ftiCall('begin_match',{room_id:FTI_ROOM.id,force:!!force,settings:FTI_ROOM_SETTINGS,pool:pw.map(w=>({word:w.w,category:w.c,category_clue:w.cc,passive_clue:w.p}))});FTI_LOCAL_ROLE_INDEX=0;FTI_ROLE_REVEALED=false;notice='';FTI_SIG='';await ftiRefresh()}catch(e){notice='Could not start match: '+(e.message||e);FTI_SIG='';ftiDraw()}}
+async function ftiLeaveRoom(){try{await ftiCall('leave_room',{room_id:FTI_ROOM.id})}catch(e){}if(FTI_CHANNEL&&FTI_SB)FTI_SB.removeChannel(FTI_CHANNEL);try{localStorage.removeItem('fti_room')}catch(e){}FTI_ROOM=null;FTI_PLAYER=null;FTI_LAST=null;FTI_SIG='';go('cloudhome')}
+const ftiOriginalRender=render;
+window.addEventListener('online',()=>{if(FTI_ROOM)ftiRefresh()});
+// ===== Cloud gameplay: discussion, police, voting, results, play again, reconnection =====
+let FTI_SIG='',FTI_CF='',FTI_SEL=[],FTI_PICK=null,FTI_READY=false,FTI_BUSY2=false,FTI_OFFLINE=false;
+const FTI_CV=['cloudlobby','cloudroles','cloudplay'];
+const pn=id=>esc((FTI_LAST?.players||[]).find(p=>p.id===id)?.display_name||'?');
+const ftiTarget=ph=>ph==='WAITING_FOR_PLAYERS'?'cloudlobby':ph==='ROLE_DISTRIBUTION'?'cloudroles':'cloudplay';
+const ftiDraw=()=>{ftiOriginalRender();if(v==='cloudlobby')ftiFillLobby()};
+render=ftiDraw;
+const ftiBtn=(l,a,args={},dis=false,cls='')=>`<button class="btn ${cls}" ${dis||FTI_BUSY2?'disabled':''} onclick='ftiAct("${a}",${JSON.stringify(args)})'>${FTI_BUSY2?'…':l}</button>`;
+const ftiHd=t=>`<div class=row style="padding:14px 0"><h2 style="margin:0">${t}</h2></div>`;
+const ftiBanner=()=>`${FTI_OFFLINE?'<div class=card><b class=w>⚠ Reconnecting…</b></div>':''}${FTI_LAST&&!FTI_LAST.host_online?'<div class=card><b class=w>⏸ Host disconnected. The game is paused.</b></div>':''}${nb()}`;
+const ftiRoleHtml=r=>r?`${tag(r.role)}${r.role==='imposter'?`<p>Category: <b>${esc(r.category)}</b></p><p>Passive clue: <b>${esc(r.passive_clue)}</b></p><p>Teammates: ${esc((r.teammate_names||[]).join(', ')||'None')}</p>`:`<div class=big2>${esc(r.secret_word||'')}</div>`}`:'';
+const ftiReadyList=()=>(FTI_LAST?.players||[]).filter(p=>p.plays&&!p.is_local&&!['left','removed'].includes(p.status)).map(p=>`<div class=row><span>${esc(p.display_name)}</span>${p.ready?`<b class=ok>${esc(p.display_name)} completed.</b>`:'<span class=w>Waiting…</span>'}</div>`).join('')||'<p class=m>No remote players.</p>';
+function ftiFillLobby(){const el=$('#fti-player-list');if(!el||!FTI_LAST)return;const H=FTI_PLAYER?.is_host;
+ el.innerHTML=FTI_LAST.players.map(p=>{const loc=p.is_local||p.is_host;const st=p.status==='connected'?'<span class=ok>✓ Connected</span>':p.status==='disconnected'?'<span style="color:#EF5967">● Disconnected</span>':`<span class=w>● ${esc(p.status)}</span>`;
+  return `<div class=row><span>${esc(p.display_name)} <span class=m>${p.is_host?'· Host':p.is_local?'· Local':'· Remote'}</span></span><span>${loc?'':st}${H&&!loc?` <button class=ib onclick='ftiAct("remove_player",{"player_id":"${p.id}"})'>✕</button>`:''}</span></div>`}).join('')||'<p class=m>No players yet.</p>';
+ const s=$('#fti-live-status');if(s)s.textContent=FTI_OFFLINE?'Reconnecting…':'Live room connected. '+FTI_LAST.players.length+' player(s).'}
+async function ftiRefresh(){
+ try{const d=await ftiCall('room_snapshot',{room_id:FTI_ROOM.id});const prev=FTI_LAST;FTI_ROOM=d.room;FTI_LAST=d;FTI_PLAYER=d.players.find(p=>p.id===d.me)||FTI_PLAYER;
+  const was=FTI_OFFLINE;FTI_OFFLINE=false;
+  if(FTI_PLAYER?.is_host&&d.room.settings&&d.room.settings.police_enabled!==undefined)FTI_ROOM_SETTINGS=d.room.settings;
+  if(prev){d.players.forEach(p=>{if(p.is_local||p.is_host)return;const o=prev.players.find(x=>x.id===p.id);
+    if(!o)notice=`${p.display_name} connected successfully.`;else if(o.status!==p.status){if(p.status==='disconnected')notice=`${p.display_name} disconnected.`;else if(p.status==='connected')notice=`${p.display_name} reconnected.`;else if(p.status==='left')notice=`${p.display_name} has left the game.`}});
+   if(prev.room.phase!==d.room.phase||prev.room.cycle!==d.room.cycle||(prev.room.pub.voted||[]).length!==(d.room.pub.voted||[]).length){FTI_SEL=[];FTI_PICK=null;FTI_READY=false;FTI_CF=''}
+   if(prev.room.match_no!==d.room.match_no){FTI_LOCAL_ROLE_INDEX=0;FTI_ROLE_REVEALED=false}}
+  if(d.room.phase==='MATCH_CLOSED'&&!FTI_PLAYER?.is_host)try{localStorage.removeItem('fti_room')}catch(e){}
+  if(FTI_CV.includes(v)){const t=ftiTarget(d.room.phase);
+   const sig=JSON.stringify([d.room.version,t,d.players.map(p=>[p.id,p.status,p.ready,p.points]),(d.my_roles||[]).length,notice,d.host_online,FTI_LOCAL_ROLE_INDEX,FTI_ROLE_REVEALED,FTI_BUSY2,FTI_CF,FTI_SEL,FTI_PICK,FTI_READY]);
+   if(was||t!==v||sig!==FTI_SIG){v=t;FTI_SIG=sig;ftiDraw()}}
+ }catch(e){const m=String(e.message||e);
+  if(/removed|not in this room|not found/i.test(m)){try{localStorage.removeItem('fti_room')}catch(x){}FTI_ROOM=null;FTI_LAST=null;notice=m;go('cloudhome');return}
+  if(!FTI_OFFLINE){FTI_OFFLINE=true;if(FTI_CV.includes(v))ftiDraw()}}}
+async function ftiAct(a,p={}){if(FTI_BUSY2)return;FTI_BUSY2=true;notice='';ftiDraw();
+ try{await ftiCall(a,{room_id:FTI_ROOM.id,action_id:crypto.randomUUID?crypto.randomUUID():String(Date.now()),...p});if(a==='cast_vote'){FTI_PICK=null;FTI_READY=false}if(a==='police_nominate')FTI_SEL=[];FTI_CF=''}catch(e){notice=e.message||String(e)}
+ FTI_BUSY2=false;FTI_SIG='';await ftiRefresh()}
+function ftiCfm(k){if(FTI_CF===k){FTI_CF='';ftiAct('end_disc')}else{FTI_CF=k;ftiDraw()}}
+function ftiSel(i){const mx=FTI_LAST.room.pub.imp_left;if(FTI_SEL.includes(i))FTI_SEL=FTI_SEL.filter(x=>x!==i);else if(FTI_SEL.length<mx)FTI_SEL=[...FTI_SEL,i];ftiDraw()}
+function ftiPlayView(){
+ const d=FTI_LAST;if(!d)return '<div class=card>Loading…</div>';
+ const r=d.room,pub=r.pub||{},ph=r.phase,H=!!FTI_PLAYER?.is_host,me=d.me,P=id=>d.players.find(p=>p.id===id);
+ const my=(d.my_roles||[]).find(x=>x.player_id===me);
+ const mine=!H&&my&&ph!=='MATCH_RESULT'?`<details class=card><summary>🔐 My role</summary>${ftiRoleHtml(my)}</details>`:'';
+ const top=ftiHd(ph==='MATCH_RESULT'||ph==='PLAY_AGAIN'?'Match result':'Cycle '+r.cycle)+ftiBanner();let b='';
+ if(ph==='DISCUSSION'){const tp=pub.turn,tpl=P(tp),remote=tpl&&!tpl.is_local;
+  if(!H&&tp===me)b=`<div class=c><div class=big>🎤</div><div class=big2>Your Turn!</div><p>${pn(me)}, it is your turn to speak.</p></div>`+foot(pub.turn_done?'<div class=card><b>Done ✓ Waiting for the host…</b></div>':ftiBtn('DONE','disc_done'));
+  else{b=`<div class=c><div class=big2>${pn(tp)} is speaking</div><p class=m>Round ${r.round} of ${r.settings.discussion_rounds}</p>${remote?(pub.turn_done?`<p class=ok>${pn(tp)} completed.</p>`:`<p class=w>Waiting for ${pn(tp)}…</p>`):''}</div>`;
+   if(H)b+=foot(ftiBtn('NEXT PLAYER','disc_next',{},remote&&!pub.turn_done)+(remote&&!pub.turn_done&&tpl.status!=='connected'?ftiBtn('SKIP OFFLINE PLAYER','host_skip',{},false,'sec'):'')+`<button class="btn sec" onclick="ftiCfm('end')">${FTI_CF==='end'?'TAP AGAIN TO END DISCUSSION':'END DISCUSSION'}</button>`)}}
+ else if(ph==='INTERROGATION'){const ids=Object.keys(pub.q||{}),all=ids.every(i=>pub.q[i]!==0);
+  b=`<div class=card><h3>Police interrogation</h3><p class=m>Police: ${pub.police_ids.map(pn).join(', ')}</p>${ids.map(i=>`<div class=row><span>${pn(i)}</span><span>${['Pending','✓ Answered','Skipped'][pub.q[i]]}</span></div>${H&&pub.q[i]===0?`<div class=row>${ftiBtn('ANSWERED','int_mark',{player_id:i,status:1})}${r.settings.allow_skip?ftiBtn('SKIP','int_mark',{player_id:i,status:2},false,'sec'):''}</div>`:''}`).join('')}</div>`+(H?foot(ftiBtn('COMPLETE INTERROGATION','int_complete',{},!all)):'<p class=m>Waiting for the host…</p>')}
+ else if(ph==='POLICE_NOMINATION'){const lead=pub.lead,lp=P(lead),can=(!H&&lead===me)||(H&&lp?.is_local),cands=pub.active.filter(i=>!pub.police_ids.includes(i));
+  b=can?`<div class=card><h3>${H?pn(lead)+' · lead officer':'You are the lead officer'}</h3><p class=m>Select 1 to ${pub.imp_left} suspect(s) for the police team.</p>${cands.map(i=>`<button class="btn ${FTI_SEL.includes(i)?'':'sec'}" onclick="ftiSel('${i}')">${FTI_SEL.includes(i)?'✓ ':''}${pn(i)}</button>`).join('')}</div>`+foot(ftiBtn('CONFIRM POLICE VOTES','police_nominate',{ids:FTI_SEL},!FTI_SEL.length)):`<div class=card><h3>Police are choosing suspects</h3><p class=m>Lead officer: ${pn(lead)}</p></div>`}
+ else if(ph==='VOTING'){const vt=pub.vote,cur=vt.voters[vt.vi],cp=P(cur),can=(!H&&cur===me)||(H&&cp?.is_local);
+  const prog=vt.voters.map(i=>`<div class=row><span>${pn(i)}</span><span>${pub.voted.includes(i)?'<b class=ok>✓ Voted</b>':i===cur?(i===me?'<b class=w>Your turn</b>':'<b class=w>Voting…</b>'):'<span class=m>Waiting</span>'}</span></div>`).join('');
+  const head=`<div class=card><h3>${vt.kind==='revote'?'Tie! Revote':'Voting'}</h3>${pub.nom?.length&&vt.kind==='main'?`<p class=m>Police nominated: <b>${pub.nom.map(pn).join(', ')}</b></p>`:''}${vt.kind==='revote'?`<p class=m>Tied: ${vt.cand.map(pn).join(', ')}</p>`:''}${prog}</div>`;let act='';
+  if(can&&cur){if(H&&!FTI_READY)act=`<div class=c><p class=m>Pass the phone to</p><div class=big2>${pn(cur)}</div></div>`+foot(`<button class=btn onclick="FTI_READY=true;ftiDraw()">I AM ${pn(cur).toUpperCase()}</button>`);
+   else act=`<div class=card><h3>${pn(cur)}, who is the imposter?</h3>${vt.cand.filter(i=>i!==cur).map(i=>`<button class="btn ${FTI_PICK===i?'':'sec'}" onclick="FTI_PICK='${i}';ftiDraw()">${FTI_PICK===i?'✓ ':''}${pn(i)}</button>`).join('')}</div>`+foot(ftiBtn('SUBMIT VOTE','cast_vote',{target_id:FTI_PICK},!FTI_PICK))}
+  else if(!H&&pub.voted.includes(me))act='<p class=m>Vote submitted. Waiting for the others…</p>';
+  else act=`<p class=m>${pn(cur)} is voting…</p>`+(H&&cp&&cp.status!=='connected'?foot(ftiBtn('SKIP OFFLINE VOTER','host_skip',{},false,'sec')):'');
+  b=head+act}
+ else if(ph==='VOTE_RESOLUTION'){const e=pub.elim||{},tot=Object.entries(e.totals||{}).map(([i,n])=>`<div class=row><span>${pn(i)}</span><b>${n}</b></div>`).join('');
+  b=`<div class=card>${e.none?'<h3>Tie again — nobody is eliminated</h3>':`<h3>${pn(e.id)} was eliminated</h3>${tag(e.role)}`}<p class=m>Vote totals</p>${tot}<p class=m>Active: ${pub.active.length} · Imposters left: ${pub.imp_left}</p></div>`+(H?foot(ftiBtn('CONTINUE','next_cycle')):'<p class=m>Waiting for the host…</p>')}
+ else if(ph==='MATCH_RESULT'){const x=pub.result,won=x.team==='innocents';
+  b=`<div class=c><div class=big>${won?'🕵️':'😈'}</div><div class=big2 style="color:${won?'#32B77A':'#EF5967'}">${won?'Imposter caught!':'Imposter escaped!'}</div><p>${won?'Innocents':'Imposters'} win</p><p class=m>Word: <b>${esc(x.word.word)}</b> · ${esc(x.word.category)}</p></div>`+x.scores.map(s=>`<div class=card>${tag(s.role)} <b>${esc(s.name)}</b><div class=row><span class=m>${esc(s.detail)}</span><b>${s.points>0?'+':''}${s.points}</b></div><p class=m>Total: ${P(s.id)?.points??0}</p></div>`).join('')+`<p class=m>Cycles: ${x.stats.cycles} · Ballots: ${x.stats.ballots} · Eliminated: ${x.stats.eliminated}</p>`+(H?foot(ftiBtn('PLAY AGAIN','play_again_invite')+'<button class="btn sec" onclick="ftiLeaveRoom()">CLOSE ROOM</button>'):'<p class=m>Waiting for the host…</p>')}
+ else if(ph==='PLAY_AGAIN'){const pa=pub.pa||{},ids=Object.keys(pa);
+  if(!H){const a=pa[me];b=a==null?`<div class=c><div class=big>🔁</div><div class=big2>The host wants to play another match.</div></div>`+foot(ftiBtn('CONTINUE PLAYING','play_again_reply',{choice:'continue'})+ftiBtn('QUIT','play_again_reply',{choice:'quit'},false,'sec')):a==='continue'?'<div class=card><b>You are in. Waiting for the host…</b></div>':`<div class=card><b>${pn(me)} has left the game.</b></div><button class=btn onclick="ftiLeaveRoom()">HOME</button>`}
+  else{const pend=ids.filter(i=>pa[i]!=='continue');b=`<div class=card><h3>Next match</h3>${ids.map(i=>`<div class=row><span>${pn(i)}</span><span>${pa[i]==='continue'?'<b class=ok>✓ Continuing</b>':pa[i]==='quit'?`<b style="color:#EF5967">${pn(i)} has left the game</b>`:'<span class=w>Waiting…</span>'}</span></div>`).join('')||'<p class=m>Only local players.</p>'}</div>`+foot(pend.length?`<button class=btn onclick="ftiHostStart(true)">REMOVE ${pend.length} & START NEXT MATCH</button>`:'<button class=btn onclick="ftiHostStart(false)">START NEXT MATCH</button>')}}
+ else if(ph==='MATCH_CLOSED')b='<div class=card><h3>The host closed this room</h3></div><button class=btn onclick="ftiLeaveRoom()">HOME</button>';
+ return top+mine+b}
+V.cloudplay=ftiPlayView;
+setInterval(()=>{if(FTI_ROOM&&FTI_CV.includes(v)&&!FTI_BUSY2)ftiRefresh()},10000);   // heartbeat = presence + reconnection
+(async()=>{try{const id=localStorage.getItem('fti_room');if(!id||!ftiReady())return;const d=await ftiCall('room_snapshot',{room_id:id});
+ FTI_ROOM=d.room;FTI_LAST=d;FTI_PLAYER=d.players.find(p=>p.id===d.me);if(!FTI_PLAYER||d.room.phase==='MATCH_CLOSED')throw 0;
+ v=ftiTarget(d.room.phase);ftiWatch();ftiDraw()}catch(e){try{localStorage.removeItem('fti_room')}catch(x){}}})();
+</script></body></html>
